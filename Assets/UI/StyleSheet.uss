@@ -1,0 +1,62 @@
+.ButtonStyle {
+    justify-content: center;
+    align-items: center;
+    width: 136px;
+    font-size: 18px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: rgb(22, 51, 113);
+    -unity-font-style: bold;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    color: rgb(255, 255, 255);
+}
+
+.ButtonStyle:hover {
+    justify-content: center;
+    align-items: center;
+    width: 136px;
+    font-size: 18px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: rgb(39, 72, 144);
+    -unity-font-style: bold;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    color: rgb(255, 255, 255);
+}
+
+.ButtonStyle:active {
+    justify-content: center;
+    align-items: center;
+    width: 136px;
+    font-size: 18px;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    background-color: rgb(85, 112, 171);
+    -unity-font-style: bold;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    color: rgb(255, 255, 255);
+}
+
+.LabelStyle {
+    font-size: 24px;
+    -unity-font-style: normal;
+}
+
+.LabelTitleStyle {
+    -unity-font-style: bold;
+}

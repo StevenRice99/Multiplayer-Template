@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/StyleSheet.uss?fileID=7433441132597879392&amp;guid=30a96ceb107623a4cbfef49eeb13390b&amp;type=3#StyleSheet" />
+    <ui:VisualElement name="Background" style="flex-grow: 1; align-items: center; justify-content: center;">
+        <ui:VisualElement name="MainPanel" style="height: 290px; width: 326px; background-color: rgb(255, 255, 255); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-top-left-radius: 15px; border-bottom-left-radius: 15px; border-top-right-radius: 15px; border-bottom-right-radius: 15px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); align-items: center; justify-content: center;">
+            <ui:Label text="Name" display-tooltip-when-elided="true" name="NameLabel" class="LabelStyle" style="margin-bottom: 0; padding-bottom: 0; margin-top: 0; padding-top: 0;" />
+            <ui:TextField picking-mode="Ignore" password="false" name="NameTextField" max-length="12" style="flex-direction: row; width: 292px; align-items: stretch; justify-content: center; overflow: visible; visibility: visible; display: flex; -unity-text-align: upper-center; padding-right: 1px;" />
+            <ui:Label text="Address" display-tooltip-when-elided="true" name="AddressLabel" class="LabelStyle" style="padding-bottom: 0; margin-bottom: 0;" />
+            <ui:TextField picking-mode="Ignore" password="false" name="AddressTextField" tabindex="0" style="flex-direction: row; width: 292px; align-items: stretch; justify-content: center; overflow: visible; visibility: visible; display: flex; -unity-text-align: upper-center; padding-bottom: 10px; padding-right: 1px;" />
+            <ui:Button text="Host" display-tooltip-when-elided="true" name="HostButton" focusable="true" class="ButtonStyle" style="color: rgb(255, 255, 255);" />
+            <ui:Button text="Join" display-tooltip-when-elided="true" name="JoinButton" class="ButtonStyle" style="color: rgb(255, 255, 255);" />
+            <ui:Button text="Quit" display-tooltip-when-elided="true" name="QuitButton" class="ButtonStyle" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
