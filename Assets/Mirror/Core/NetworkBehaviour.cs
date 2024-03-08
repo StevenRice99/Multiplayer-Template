@@ -67,13 +67,11 @@ namespace Mirror
         // for example: main player & pets are owned. monsters & npcs aren't.
         public bool isOwned => netIdentity.isOwned;
 
-        // Deprecated 2022-10-13
-        [Obsolete(".hasAuthority was renamed to .isOwned. This is easier to understand and prepares for SyncDirection, where there is a difference betwen isOwned and authority.")]
-        public bool hasAuthority => isOwned;
-
         /// <summary>authority is true if we are allowed to modify this component's state. On server, it's true if SyncDirection is ServerToClient. On client, it's true if SyncDirection is ClientToServer and(!) if this object is owned by the client.</summary>
-        // on the client: if owned and if clientAuthority sync direction
-        // on the server: if serverAuthority sync direction
+        // on the client: if Client->Server SyncDirection and owned
+        // on the server: if Server->Client SyncDirection
+        // on the host:   if Server->Client SyncDirection (= server owns it), or if Client->Server and owned (=host client owns it)
+        // in host mode:  always true because either server or client always has authority, and host is both.
         //
         // for example, NetworkTransform:
         //   client may modify position if ClientAuthority mode and owned
@@ -84,10 +82,20 @@ namespace Mirror
         //
         // also note that this is a per-NetworkBehaviour flag.
         // another component may not be client authoritative, etc.
-        public bool authority =>
-            isClient
-                ? syncDirection == SyncDirection.ClientToServer && isOwned
-                : syncDirection == SyncDirection.ServerToClient;
+        public bool authority
+        {
+            get
+            {
+                // host mode needs to be checked explicitly
+                if (isClient && isServer) return syncDirection == SyncDirection.ServerToClient || isOwned;
+
+                // client-only
+                if (isClient) return syncDirection == SyncDirection.ClientToServer && isOwned;
+
+                // server-only
+                return syncDirection == SyncDirection.ServerToClient;
+            }
+        }
 
         /// <summary>The unique network Id of this object (unique at runtime).</summary>
         public uint netId => netIdentity.netId;
@@ -127,8 +135,9 @@ namespace Mirror
         //   -> still supports dynamically sized types
         //
         // 64 bit mask, tracking up to 64 SyncVars.
-        protected ulong syncVarDirtyBits { get; private set; }
-        // 64 bit mask, tracking up to 64 sync collections (internal for tests).
+        // protected since NB child classes read this field in the weaver generated SerializeSyncVars method
+        protected ulong syncVarDirtyBits;
+        // 64 bit mask, tracking up to 64 sync collections.
         // internal for tests, field for faster access (instead of property)
         // TODO 64 SyncLists are too much. consider smaller mask later.
         internal ulong syncObjectDirtyBits;
@@ -304,18 +313,18 @@ namespace Mirror
             // GetComponentInParent(includeInactive) is needed because Prefabs are not
             // considered active, so this check requires to scan inactive.
 #if UNITY_EDITOR
-#if UNITY_2021_3_OR_NEWER // 2021 has GetComponentInParents(active)
+#if UNITY_2021_3_OR_NEWER // 2021 has GetComponentInParent(bool includeInactive = false)
             if (GetComponent<NetworkIdentity>() == null &&
                 GetComponentInParent<NetworkIdentity>(true) == null)
             {
-                Debug.LogError($"{GetType()} on {name} requires a NetworkIdentity. Please add a NetworkIdentity component to {name} or it's parents.");
+                Debug.LogError($"{GetType()} on {name} requires a NetworkIdentity. Please add a NetworkIdentity component to {name} or it's parents.", this);
             }
-#elif UNITY_2020_3_OR_NEWER // 2020 only has GetComponentsInParents(active), we can use this too
+#elif UNITY_2020_3_OR_NEWER // 2020 only has GetComponentsInParent(bool includeInactive = false), we can use this too
             NetworkIdentity[] parentsIds = GetComponentsInParent<NetworkIdentity>(true);
             int parentIdsCount = parentsIds != null ? parentsIds.Length : 0;
             if (GetComponent<NetworkIdentity>() == null && parentIdsCount == 0)
             {
-                Debug.LogError($"{GetType()} on {name} requires a NetworkIdentity. Please add a NetworkIdentity component to {name} or it's parents.");
+                Debug.LogError($"{GetType()} on {name} requires a NetworkIdentity. Please add a NetworkIdentity component to {name} or it's parents.", this);
             }
 #endif
 #endif
