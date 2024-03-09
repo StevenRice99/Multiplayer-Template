@@ -11,19 +11,9 @@ namespace UI
     public class LobbyUI : MonoBehaviour
     {
         /// <summary>
-        /// The players that do not yet have a team.
+        /// The list of players in the game.
         /// </summary>
-        private Label _noneListLabel;
-
-        /// <summary>
-        /// The players on the red team.
-        /// </summary>
-        private Label _redPlayersListLabel;
-
-        /// <summary>
-        /// The players on the blue team.
-        /// </summary>
-        private Label _bluePlayersListLabel;
+        private Label _playerList;
 
         /// <summary>
         /// Display messages to the player.
@@ -41,9 +31,7 @@ namespace UI
             VisualElement root = GetComponent<UIDocument>().rootVisualElement;
             
             // Store elements.
-            _noneListLabel = root.Q<Label>("NoneList");
-            _redPlayersListLabel = root.Q<Label>("RedPlayersList");
-            _bluePlayersListLabel = root.Q<Label>("BluePlayersList");
+            _playerList = root.Q<Label>("PlayerList");
             _displayMessageLabel = root.Q<Label>("DisplayMessage");
             _readyStatusLabel = root.Q<Label>("ReadyStatus");
         }
@@ -51,9 +39,7 @@ namespace UI
         private void Update()
         {
             // Keep lists updated.
-            _noneListLabel.text = BuildPlayerList(Team.None);
-            _redPlayersListLabel.text = BuildPlayerList(Team.Red);
-            _bluePlayersListLabel.text = BuildPlayerList(Team.Blue);
+            _playerList.text = BuildPlayerList();
 
             // Display the correct message.
             _displayMessageLabel.text = GameManager.DisplayMessage;
@@ -63,13 +49,12 @@ namespace UI
         }
 
         /// <summary>
-        /// Build a string list of players on a team.
+        /// Build a string list of players.
         /// </summary>
-        /// <param name="team">The team to get the players on.</param>
         /// <returns>A string of all team members on newlines.</returns>
-        private static string BuildPlayerList(Team team)
+        private static string BuildPlayerList()
         {
-            return string.Join("\n", GameManager.players.Where(x => x.Team == team).Select(x => x.PlayerName));
+            return string.Join("\n", GameManager.players.Select(x => x.PlayerName));
         }
 
         /// <summary>
@@ -80,39 +65,11 @@ namespace UI
         {
             // Get if the local player is ready.
             string msg = GameManager.localPlayer != null && GameManager.localPlayer.Ready ? "Ready\n" : "Not Ready\n";
-            
-            // There are no players on either team.
-            if (GameManager.RedPlayers < 1 && GameManager.BluePlayers < 1)
-            {
-                return $"{msg}No players on Red or Blue";
-            }
-
-            // There are no players on the red team.
-            if (GameManager.RedPlayers < 1)
-            {
-                return $"{msg}No players on Red";
-            }
-
-            // There are no players on the blue team.
-            if (GameManager.BluePlayers < 1)
-            {
-                return $"{msg}No players on Blue";
-            }
-            
-            // If there are players not yet on a team, they need to choose one, although this should be automatic.
-            if (GameManager.RedPlayers + GameManager.BluePlayers != GameManager.players.Count)
-            {
-                return $"{msg}Waiting for players to pick teams";
-            }
 
             // If all players are ready display that the match is starting.
-            if (GameManager.ReadyPlayers == GameManager.players.Count)
-            {
-                return $"{msg}Starting match...";
-            }
-
-            // Display how many players are ready otherwise.
-            return $"{msg}{GameManager.ReadyPlayers} of {GameManager.players.Count} ready";
+            return GameManager.ReadyPlayers == GameManager.players.Count ? $"{msg}Starting match..." :
+                // Display how many players are ready otherwise.
+                $"{msg}{GameManager.ReadyPlayers} of {GameManager.players.Count} ready";
         }
     }
 }

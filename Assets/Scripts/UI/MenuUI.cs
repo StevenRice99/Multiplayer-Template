@@ -85,7 +85,10 @@ namespace UI
                 _nameTextField?.UnregisterValueChangedCallback(NameChanged);
                 _addressTextField?.UnregisterValueChangedCallback(AddressChanged);
             }
-            catch { }
+            catch
+            {
+                // Ignore as this means components were already gone.
+            }
         }
 
         /// <summary>

@@ -1,8 +1,7 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Interactable;
+using Interact;
 using Mirror;
 using Unity.Mathematics;
 using UnityEngine;
@@ -65,24 +64,14 @@ public class GameManager : NetworkManager
     public static PlayerController localPlayer;
 
     /// <summary>
-    /// The target to track when eliminated.
-    /// </summary>
-    public static PlayerController eliminatedTarget;
-
-    /// <summary>
-    /// The position the player was last eliminated at.
-    /// </summary>
-    public static Vector3 eliminatedPosition;
-
-    /// <summary>
     /// All players in the game.
     /// </summary>
     public static readonly HashSet<PlayerController> players = new();
 
     /// <summary>
-    /// All interactable objects in the scene.
+    /// All objects you can interact with in the scene.
     /// </summary>
-    public static readonly HashSet<InteractableBase> interactableObjects = new();
+    public static readonly HashSet<InteractBase> interactObjects = new();
 
     /// <summary>
     /// The messages to display on the UI.
@@ -93,36 +82,16 @@ public class GameManager : NetworkManager
     /// The local player's name.
     /// </summary>
     public static string PlayerName { get; private set; } = DefaultPlayerName;
-
-    /// <summary>
-    /// The team the local player is on.
-    /// </summary>
-    public static Team Team { get; private set; }
     
     /// <summary>
     /// The number of players that are ready.
     /// </summary>
     public static int ReadyPlayers { get; private set; }
-    
-    /// <summary>
-    /// The number of players on the red team.
-    /// </summary>
-    public static int RedPlayers { get; private set; }
-    
-    /// <summary>
-    /// The number of players on the blue team.
-    /// </summary>
-    public static int BluePlayers { get; private set; }
 
     /// <summary>
     /// The sound level.
     /// </summary>
     public static float Sound { get; private set; }
-    
-    /// <summary>
-    /// The delay between switching scenes.
-    /// </summary>
-    public static int SceneSwitchDelay => Instance.sceneSwitchDelay;
 
     /// <summary>
     /// How fast the players move.
@@ -135,39 +104,9 @@ public class GameManager : NetworkManager
     public static float JumpForce => Instance.jumpForce;
 
     /// <summary>
-    /// How far to raycast for ground detection.
+    /// How far to cast for ground detection.
     /// </summary>
     public static float GroundedDistance => Instance.groundedDistance;
-
-    /// <summary>
-    /// The health of players.
-    /// </summary>
-    public static int Health => Instance.health;
-
-    /// <summary>
-    /// The time to wait before respawning.
-    /// </summary>
-    public static int RespawnDelay => Instance.respawnDelay;
-
-    /// <summary>
-    /// The transform of the local player's camera.
-    /// </summary>
-    public static Transform CameraPosition => localPlayer != null ? localPlayer.CameraPosition : null;
-    
-    /// <summary>
-    /// Default material for players not assigned to a team.
-    /// </summary>
-    public static Material NoneMaterial => Instance.noneMaterial;
-
-    /// <summary>
-    /// Material for the red team.
-    /// </summary>
-    public static Material RedTeamMaterial => Instance.redTeamMaterial;
-
-    /// <summary>
-    /// Material for the blue team.
-    /// </summary>
-    public static Material BlueTeamMaterial => Instance.blueTeamMaterial;
 
     /// <summary>
     /// The movement for the local player.
@@ -178,11 +117,6 @@ public class GameManager : NetworkManager
     /// The looking for the local player.
     /// </summary>
     public static Vector2 Look => Instance._optionsOpen ? Vector2.zero : Instance._look;
-
-    /// <summary>
-    /// If currently in the lobby.
-    /// </summary>
-    public static bool IsLobby => networkSceneName == singleton.onlineScene || SceneManager.GetActiveScene().name == "Lobby";
     
     /// <summary>
     /// Jump controls for the local player.
@@ -200,20 +134,22 @@ public class GameManager : NetworkManager
     private static GameManager Instance => singleton as GameManager;
 
     /// <summary>
-    /// Names of all the maps so map rotation knows what to load.
+    /// The transform of the local player's camera.
     /// </summary>
-    [Header("Levels")]
-    [SerializeField]
-    [Tooltip("Names of all the maps so map rotation knows what to load.")]
-    private string[] maps;
+    private static Transform CameraPosition => localPlayer != null ? localPlayer.CameraPosition : null;
 
     /// <summary>
-    /// The delay between switching scenes.
+    /// If currently in the lobby.
     /// </summary>
+    private static bool IsLobby => networkSceneName == singleton.onlineScene || SceneManager.GetActiveScene().name == "Lobby";
+
+    /// <summary>
+    /// Names of all the maps so map rotation knows what to load.
+    /// </summary>
+    [Header("Level")]
     [SerializeField]
-    [Min(0)]
-    [Tooltip("The delay between switching scenes.")]
-    private int sceneSwitchDelay = 5;
+    [Tooltip("The of the level to play on.")]
+    private string level;
 
     /// <summary>
     /// How fast the players move.
@@ -233,50 +169,12 @@ public class GameManager : NetworkManager
     private float jumpForce = 6;
 
     /// <summary>
-    /// How far to raycast for ground detection.
+    /// How far to cast for ground detection.
     /// </summary>
     [SerializeField]
     [Min(float.Epsilon)]
-    [Tooltip("How far to raycast for ground detection.")]
+    [Tooltip("How far to cast for ground detection.")]
     private float groundedDistance = 1.5f;
-
-    /// <summary>
-    /// The health of players.
-    /// </summary>
-    [SerializeField]
-    [Min(1)]
-    [Tooltip("The health of players.")]
-    private int health = 100;
-
-    /// <summary>
-    /// The time to wait before respawning.
-    /// </summary>
-    [SerializeField]
-    [Min(0)]
-    [Tooltip("The time to wait before respawning.")]
-    private int respawnDelay = 5;
-
-    /// <summary>
-    /// Default material for players not assigned to a team.
-    /// </summary>
-    [Header("Visuals")]
-    [SerializeField]
-    [Tooltip("Default material for players not assigned to a team.")]
-    private Material noneMaterial;
-    
-    /// <summary>
-    /// Material for the red team.
-    /// </summary>
-    [SerializeField]
-    [Tooltip("Material for the red team.")]
-    private Material redTeamMaterial;
-    
-    /// <summary>
-    /// Material for the blue team.
-    /// </summary>
-    [SerializeField]
-    [Tooltip("Material for the blue team.")]
-    private Material blueTeamMaterial;
 
     /// <summary>
     /// Cache of the main camera.
@@ -349,11 +247,6 @@ public class GameManager : NetworkManager
     private List<UIDocument> _otherUIDocuments;
 
     /// <summary>
-    /// Coroutine to begin a match.
-    /// </summary>
-    private Coroutine _startMapCoroutine;
-
-    /// <summary>
     /// Check if this is the server.
     /// </summary>
     private bool IsServer => isNetworkActive && mode is NetworkManagerMode.Host or NetworkManagerMode.ServerOnly;
@@ -380,43 +273,6 @@ public class GameManager : NetworkManager
             UIDocument thisUIDocument = GetComponent<UIDocument>();
             _otherUIDocuments = FindObjectsOfType<UIDocument>().Where(u => u != thisUIDocument).ToList();
             return _otherUIDocuments;
-        }
-    }
-
-    /// <summary>
-    /// Load the next map.
-    /// </summary>
-    public static void LoadMap()
-    {
-        // Ensure there are maps to load.
-        if (Instance.maps == null || Instance.maps.Length == 0)
-        {
-            return;
-        }
-
-        // Set to the next index.
-        int index = Array.IndexOf(Instance.maps, SceneManager.GetActiveScene().name);
-        if (index < 0 || index == Instance.maps.Length - 1)
-        {
-            index = 0;
-        }
-        else
-        {
-            index++;
-        }
-        
-        // Load the map.
-        singleton.ServerChangeScene(Instance.maps[index]);
-    }
-    
-    /// <summary>
-    /// Set the team to that of the local player.
-    /// </summary>
-    public static void SetTeam()
-    {
-        if (localPlayer != null)
-        {
-            Team = localPlayer.Team;
         }
     }
 
@@ -523,44 +379,15 @@ public class GameManager : NetworkManager
             return;
         }
         
-        // Handle interactable objects and the camera on clients (not standalone servers).
-        HandleInteractable();
+        // Handle objects you can interact with and the camera on clients (not standalone servers).
+        HandleInteractions();
         HandleCamera();
     }
 
-    public override void OnServerDisconnect(NetworkConnectionToClient conn)
-    {
-        base.OnServerDisconnect(conn);
-
-        // Return to the lobby.
-        StartCoroutine(ServerReturnToLobby());
-    }
-    
     /// <summary>
-    /// Wait a frame to return to the lobby.
+    /// Handle the logic of all objects you can interact with.
     /// </summary>
-    /// <returns>Nothing.</returns>
-    private IEnumerator ServerReturnToLobby()
-    {
-        yield return 0;
-        
-        // If already in the lobby, do nothing.
-        if (SceneManager.GetActiveScene().name == onlineScene || networkSceneName == onlineScene)
-        {
-            yield break;
-        }
-        
-        // Otherwise return to the lobby.
-        if (players.All(p => p.Team != Team.Red) || players.All(p => p.Team != Team.Blue))
-        {
-            ReturnToLobby();
-        }
-    }
-
-    /// <summary>
-    /// Handle the logic of all interactable objects.
-    /// </summary>
-    private void HandleInteractable()
+    private void HandleInteractions()
     {
         // Do not handle if the options menu is open.
         if (_optionsOpen || CameraPosition == null)
@@ -568,18 +395,18 @@ public class GameManager : NetworkManager
             return;
         }
 
-        // Get the nearest interactable in range.
-        InteractableBase interactableBase = interactableObjects.Where(i => Vector3.Distance(CameraPosition.position, i.transform.position) <= i.ActivationDistance).OrderBy(i => Vector3.Distance(CameraPosition.position, i.transform.position)).FirstOrDefault();
+        // Get the nearest object you can interact with in range.
+        InteractBase interactBase = interactObjects.Where(i => Vector3.Distance(CameraPosition.position, i.transform.position) <= i.ActivationDistance).OrderBy(i => Vector3.Distance(CameraPosition.position, i.transform.position)).FirstOrDefault();
 
         // If none, have an empty message.
-        if (interactableBase == null)
+        if (interactBase == null)
         {
             DisplayMessage = string.Empty;
             return;
         }
 
         // Otherwise set the message.
-        DisplayMessage = interactableBase.DisplayMessage;
+        DisplayMessage = interactBase.DisplayMessage;
         
         if (!_interact)
         {
@@ -587,7 +414,7 @@ public class GameManager : NetworkManager
         }
 
         // When the user interacts, call the interact method.
-        interactableBase.Interact();
+        interactBase.Interact();
         _interact = false;
     }
 
@@ -596,28 +423,28 @@ public class GameManager : NetworkManager
     /// </summary>
     private void HandleCamera()
     {
-        // Get the camera.
+        // If the camera is null, try and find it.
         if (_cam == null)
         {
             _cam = Camera.main;
-        }
-
-        // If still no camera, return.
-        if (_cam is null)
-        {
-            return;
+            
+            // If there is no camera tagged as the main camera, try and find any camera in the scene.
+            if (_cam == null)
+            {
+                _cam = FindObjectOfType<Camera>();
+            
+                // If there is still no camera, return.
+                if (_cam == null)
+                {
+                    return;
+                }
+            }
         }
         
         Transform camTransform = _cam.transform;
         
-        // If the player was eliminated, look at where it was stated.
-        if (eliminatedTarget != null)
-        {
-            camTransform.position = eliminatedPosition;
-            camTransform.LookAt(eliminatedTarget.CameraPosition);
-        }
-        // Otherwise, set to the local player if there is one.
-        else if (CameraPosition != null)
+        // Set to the local player if there is one.
+        if (CameraPosition != null)
         {
             camTransform.position = CameraPosition.position;
             camTransform.rotation = CameraPosition.rotation;
@@ -640,61 +467,14 @@ public class GameManager : NetworkManager
     /// </summary>
     private void ReadyToStart()
     {
-        // Keep track of the number of players on each team.
-        int ready = 0;
-        int red = 0;
-        int blue = 0;
-        
-        // Loop through every player.
-        foreach (PlayerController player in players)
-        {
-            // Tally the team.
-            switch (player.Team)
-            {
-                case Team.Red:
-                    red++;
-                    break;
-                case Team.Blue:
-                    blue++;
-                    break;
-                case Team.None:
-                default:
-                    break;
-            }
-        
-            // Add if the player is ready.
-            if (player.Ready)
-            {
-                ready++;
-            }
-        }
-        
-        // Store the final values.
-        ReadyPlayers = ready;
-        RedPlayers = red;
-        BluePlayers = blue;
+        // Get the number of players that are ready.
+        ReadyPlayers = players.Count(player => player.Ready);
 
         // If all players are ready and there is at least one player on each team, start the game.
-        if (IsServer && RedPlayers > 0 && BluePlayers > 0 && RedPlayers + BluePlayers == players.Count && ReadyPlayers == players.Count)
+        if (IsServer && !NetworkServer.isLoadingScene && players.Count > 0 && ReadyPlayers == players.Count)
         {
-            _startMapCoroutine ??= StartCoroutine(LoadMapCountdown());
+            singleton.ServerChangeScene(Instance.level);
         }
-        // Otherwise if invalid to start and was trying to start the match prior, cancel starting the match.
-        else if (_startMapCoroutine != null)
-        {
-            StopCoroutine(_startMapCoroutine);
-            _startMapCoroutine = null;
-        }
-    }
-
-    /// <summary>
-    /// Delay before starting the match.
-    /// </summary>
-    /// <returns>Nothing.</returns>
-    private static IEnumerator LoadMapCountdown()
-    {
-        yield return new WaitForSeconds(SceneSwitchDelay);
-        LoadMap();
     }
 
     /// <summary>
@@ -730,7 +510,7 @@ public class GameManager : NetworkManager
     /// Callback for when the sound is changed.
     /// </summary>
     /// <param name="evt">The change event for the sensitivity.</param>
-    private void SoundChanged(ChangeEvent<float> evt)
+    private static void SoundChanged(ChangeEvent<float> evt)
     {
         // Set the sound.
         Sound = math.clamp(evt.newValue, 0, 1);
@@ -822,7 +602,6 @@ public class GameManager : NetworkManager
                 break;
         }
         
-        Team = Team.None;
         _optionsOpen = false;
     }
 

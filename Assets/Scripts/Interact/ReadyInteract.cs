@@ -1,9 +1,9 @@
-namespace Interactable
+namespace Interact
 {
     /// <summary>
     /// Toggle ready state.
     /// </summary>
-    public class ReadyInteractable : InteractableBase
+    public class ReadyInteract : InteractBase
     {
         /// <summary>
         /// Toggle the ready state of the local player.

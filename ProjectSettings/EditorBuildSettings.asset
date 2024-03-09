@@ -12,10 +12,7 @@ EditorBuildSettings:
     path: Assets/Scenes/Lobby.unity
     guid: 1e4b85b410d6118499be7287ea4bac5f
   - enabled: 1
-    path: Assets/Scenes/Map 1.unity
-    guid: 95419b3e091cc3c439c1c2db402211b8
-  - enabled: 1
-    path: Assets/Scenes/Map 2.unity
-    guid: 899470352dfebcc40a51361c5f1aa988
+    path: Assets/Scenes/Level.unity
+    guid: c2cbbacc855a2eb4cac1e8b7b51b37e6
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: ac2e9bec2e581d54eb5002277b387897, type: 2}

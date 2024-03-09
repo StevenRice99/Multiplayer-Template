@@ -8,15 +8,15 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - Pickups
+  - 
   - Water
   - UI
-  - Player
-  - LocalPlayer
-  - HitBox
-  - Projectile
-  - LocalWeapons
-  - Border
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
   - 
   - 
   - 

@@ -1,11 +1,11 @@
 using UnityEngine;
 
-namespace Interactable
+namespace Interact
 {
     /// <summary>
     /// Base class for anything to interact with to inherit from.
     /// </summary>
-    public abstract class InteractableBase : MonoBehaviour
+    public abstract class InteractBase : MonoBehaviour
     {
         /// <summary>
         /// The message to display when in range.
@@ -29,14 +29,14 @@ namespace Interactable
 
         private void Awake()
         {
-            // Add the interactable to the manager.
-            GameManager.interactableObjects.Add(this);
+            // Add to the manager.
+            GameManager.interactObjects.Add(this);
         }
 
         private void OnDestroy()
         {
-            // Remove the interactable from the manager.
-            GameManager.interactableObjects.Remove(this);
+            // Remove to the from the manager.
+            GameManager.interactObjects.Remove(this);
         }
     }
 }

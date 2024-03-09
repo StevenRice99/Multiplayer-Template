@@ -79,9 +79,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dontDestroyOnLoad: 1
   runInBackground: 1
-  autoStartServerBuild: 1
-  autoConnectClientBuild: 0
+  headlessStartMode: 1
+  editorAutoStart: 0
   sendRate: 128
+  autoStartServerBuild: 0
+  autoConnectClientBuild: 0
   offlineScene: Assets/Scenes/Menu.unity
   onlineScene: Assets/Scenes/Lobby.unity
   transport: {fileID: 2376842459006364307}
@@ -94,6 +96,7 @@ MonoBehaviour:
   autoCreatePlayer: 1
   playerSpawnMethod: 1
   spawnPrefabs: []
+  exceptionsDisconnect: 1
   snapshotSettings:
     bufferTimeMultiplier: 2
     bufferLimit: 32
@@ -105,27 +108,13 @@ MonoBehaviour:
     dynamicAdjustment: 1
     dynamicAdjustmentTolerance: 1
     deliveryTimeEmaDuration: 2
-  connectionQualityInterval: 3
+  evaluationMethod: 0
+  evaluationInterval: 3
   timeInterpolationGui: 0
-  maps:
-  - Map 1
-  - Map 2
-  sceneSwitchDelay: 5
+  level: Level
   speed: 15
   jumpForce: 6
   groundedDistance: 1.5
-  health: 100
-  respawnDelay: 5
-  weaponSwitchDelay: 1
-  noneMaterial: {fileID: 2100000, guid: 7698ec7e502e89147b08e7fb2e586eb1, type: 2}
-  redTeamMaterial: {fileID: 2100000, guid: c34a142b81a8214449147b27bd2e9682, type: 2}
-  blueTeamMaterial: {fileID: 2100000, guid: fe9c111a55fea244f8f688f96a1010ee, type: 2}
-  weaponReplacements:
-  - pink
-  - purple
-  - yellow
-  numberMessages: 5
-  messageTime: 5
 --- !u!114 &2376842459006364307
 MonoBehaviour:
   m_ObjectHideFlags: 0
