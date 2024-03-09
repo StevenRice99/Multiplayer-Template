@@ -150,16 +150,6 @@ public class GameManager : NetworkManager
     public static int RespawnDelay => Instance.respawnDelay;
 
     /// <summary>
-    /// The number of messages that can be displayed.
-    /// </summary>
-    private static int NumberMessages => Instance.numberMessages;
-    
-    /// <summary>
-    /// The time that messages can last.
-    /// </summary>
-    private static int MessageTime => Instance.messageTime;
-
-    /// <summary>
     /// The transform of the local player's camera.
     /// </summary>
     public static Transform CameraPosition => localPlayer != null ? localPlayer.CameraPosition : null;
@@ -193,11 +183,6 @@ public class GameManager : NetworkManager
     /// If currently in the lobby.
     /// </summary>
     public static bool IsLobby => networkSceneName == singleton.onlineScene || SceneManager.GetActiveScene().name == "Lobby";
-
-    /// <summary>
-    /// Messages to display in the game on the UI.
-    /// </summary>
-    public static string GameMessages => string.Join("\n", Instance._messages.Select(x => x.text));
     
     /// <summary>
     /// Jump controls for the local player.
@@ -294,23 +279,6 @@ public class GameManager : NetworkManager
     private Material blueTeamMaterial;
 
     /// <summary>
-    /// The number of messages that can be displayed.
-    /// </summary>
-    [Header("UI")]
-    [SerializeField]
-    [Min(1)]
-    [Tooltip("The number of messages that can be displayed.")]
-    private int numberMessages = 5;
-
-    /// <summary>
-    /// The time that messages can last.
-    /// </summary>
-    [SerializeField]
-    [Min(1)]
-    [Tooltip("The time that messages can last.")]
-    private int messageTime = 5;
-
-    /// <summary>
     /// Cache of the main camera.
     /// </summary>
     private Camera _cam;
@@ -381,11 +349,6 @@ public class GameManager : NetworkManager
     private List<UIDocument> _otherUIDocuments;
 
     /// <summary>
-    /// All messages to display.
-    /// </summary>
-    private List<Message> _messages = new();
-
-    /// <summary>
     /// Coroutine to begin a match.
     /// </summary>
     private Coroutine _startMapCoroutine;
@@ -421,15 +384,6 @@ public class GameManager : NetworkManager
     }
 
     /// <summary>
-    /// Add a message.
-    /// </summary>
-    /// <param name="text">The text of the message.</param>
-    public static void AddMessage(string text)
-    {
-        Instance._messages.Add(new() {text = text, time = MessageTime});
-    }
-
-    /// <summary>
     /// Load the next map.
     /// </summary>
     public static void LoadMap()
@@ -450,9 +404,6 @@ public class GameManager : NetworkManager
         {
             index++;
         }
-
-        // Clear any messages before the load.
-        Instance._messages.Clear();
         
         // Load the map.
         singleton.ServerChangeScene(Instance.maps[index]);
@@ -560,9 +511,6 @@ public class GameManager : NetworkManager
 
         // Handle displaying the options.
         HandleOptions();
-
-        // Handle displaying messages.
-        HandleMessages();
 
         // If in the lobby, display ready to start messages.
         if (IsLobby)
@@ -845,23 +793,6 @@ public class GameManager : NetworkManager
         _leaveButton.visible = visible;
         _leaveButton.SetEnabled(visible);
         _leaveButton.style.display = visible ? DisplayStyle.Flex : DisplayStyle.None;
-    }
-
-    /// <summary>
-    /// Handle all messages.
-    /// </summary>
-    private void HandleMessages()
-    {
-        // Loop through all messages and increment the time.
-        for (int index = 0; index < _messages.Count; index++)
-        {
-            Message message = _messages[index];
-            message.time -= Time.deltaTime;
-            _messages[index] = message;
-        }
-
-        // Take only the newest messages that have not expired.
-        _messages = _messages.GroupBy(m => m.text).Select(x => x.First()).Where(m => m.time > 0).OrderByDescending(x => x.time).Take(NumberMessages).ToList();
     }
 
     /// <summary>

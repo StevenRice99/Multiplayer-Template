@@ -136,26 +136,6 @@ public class PlayerController : NetworkBehaviour
     private bool _airborne;
 
     /// <summary>
-    /// Receive a message.
-    /// </summary>
-    /// <param name="text">The message.</param>
-    [Command(requiresAuthority = false)]
-    public void MessageCmd(string text)
-    {
-        ReceiveMessageRpc(text);
-    }
-
-    /// <summary>
-    /// Receive a message.
-    /// </summary>
-    /// <param name="text">The message.</param>
-    [ClientRpc]
-    private void ReceiveMessageRpc(string text)
-    {
-        GameManager.AddMessage(text);
-    }
-
-    /// <summary>
     /// Set the health of this player.
     /// </summary>
     /// <param name="value">The value to set it to.</param>
