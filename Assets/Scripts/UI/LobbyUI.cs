@@ -51,10 +51,10 @@ namespace UI
         /// <summary>
         /// Build a string list of players.
         /// </summary>
-        /// <returns>A string of all team members on newlines.</returns>
+        /// <returns>A string of all players.</returns>
         private static string BuildPlayerList()
         {
-            return string.Join("\n", GameManager.players.Select(x => x.PlayerName));
+            return string.Join("\n", GameManager.players.OrderBy(x => x.PlayerName).Select(x => x.PlayerName));
         }
 
         /// <summary>

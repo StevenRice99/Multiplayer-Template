@@ -148,7 +148,7 @@ public class GameManager : NetworkManager
     /// </summary>
     [Header("Level")]
     [SerializeField]
-    [Tooltip("The of the level to play on.")]
+    [Tooltip("The level to play on.")]
     private string level;
 
     /// <summary>

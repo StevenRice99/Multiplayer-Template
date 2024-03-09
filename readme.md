@@ -5,15 +5,14 @@
 
 # Controls
 
-| Action             | Control           |
-|--------------------|-------------------|
-| Move               | WASD              |
-| Look               | Mouse             |
-| Jump               | Space             |
-| Shoot              | Left Mouse Button |
-| Interact           | F                 |
-| Toggle Fullscreen  | `                 |
-| Open/Close Options | Escape            |
+| Action             | Control  |
+|--------------------|----------|
+| Move               | WASD     |
+| Look               | Mouse    |
+| Jump               | Space    |
+| Interact           | F        |
+| Toggle Fullscreen  | `        |
+| Open/Close Options | Escape   |
 
 # Instructions
 
