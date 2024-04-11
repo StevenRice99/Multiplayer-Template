@@ -134,14 +134,14 @@ public class GameManager : NetworkManager
     private static GameManager Instance => singleton as GameManager;
 
     /// <summary>
+    /// If currently in the lobby.
+    /// </summary>
+    public static bool IsLobby => networkSceneName == singleton.onlineScene || SceneManager.GetActiveScene().name == "Lobby";
+
+    /// <summary>
     /// The transform of the local player's camera.
     /// </summary>
     private static Transform CameraPosition => localPlayer != null ? localPlayer.CameraPosition : null;
-
-    /// <summary>
-    /// If currently in the lobby.
-    /// </summary>
-    private static bool IsLobby => networkSceneName == singleton.onlineScene || SceneManager.GetActiveScene().name == "Lobby";
 
     /// <summary>
     /// Names of all the maps so map rotation knows what to load.
